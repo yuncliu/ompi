@@ -91,7 +91,7 @@ static inline bool pmix_atomic_compare_exchange_strong_32 (pmix_atomic_int32_t *
     __asm__ __volatile__ ("1:  ldaxr    %w0, [%2]      \n"
                           "    cmp     %w0, %w3        \n"
                           "    bne     2f              \n"
-                          "    stxr    %w1, %w4, [%2]  \n"
+                          "    stlxr    %w1, %w4, [%2]  \n"
                           "    cbnz    %w1, 1b         \n"
                           "2:                          \n"
                           : "=&r" (prev), "=&r" (tmp)
@@ -130,7 +130,7 @@ static inline bool pmix_atomic_compare_exchange_strong_acq_32 (pmix_atomic_int32
     __asm__ __volatile__ ("1:  ldaxr   %w0, [%2]       \n"
                           "    cmp     %w0, %w3        \n"
                           "    bne     2f              \n"
-                          "    stxr    %w1, %w4, [%2]  \n"
+                          "    stlxr    %w1, %w4, [%2]  \n"
                           "    cbnz    %w1, 1b         \n"
                           "2:                          \n"
                           : "=&r" (prev), "=&r" (tmp)
@@ -148,7 +148,7 @@ static inline bool pmix_atomic_compare_exchange_strong_rel_32 (pmix_atomic_int32
     int32_t prev, tmp;
     bool ret;
 
-    __asm__ __volatile__ ("1:  ldxr    %w0, [%2]       \n"
+    __asm__ __volatile__ ("1:  ldaxr    %w0, [%2]       \n"
                           "    cmp     %w0, %w3        \n"
                           "    bne     2f              \n"
                           "    stlxr   %w1, %w4, [%2]  \n"
@@ -198,7 +198,7 @@ static inline bool pmix_atomic_compare_exchange_strong_64 (pmix_atomic_int64_t *
     __asm__ __volatile__ ("1:  ldaxr    %0, [%2]       \n"
                           "    cmp     %0, %3          \n"
                           "    bne     2f              \n"
-                          "    stxr    %w1, %4, [%2]   \n"
+                          "    stlxr    %w1, %4, [%2]   \n"
                           "    cbnz    %w1, 1b         \n"
                           "2:                          \n"
                           : "=&r" (prev), "=&r" (tmp)
@@ -239,7 +239,7 @@ static inline bool pmix_atomic_compare_exchange_strong_acq_64 (pmix_atomic_int64
     __asm__ __volatile__ ("1:  ldaxr   %0, [%2]        \n"
                           "    cmp     %0, %3          \n"
                           "    bne     2f              \n"
-                          "    stxr    %w1, %4, [%2]   \n"
+                          "    stlxr    %w1, %4, [%2]   \n"
                           "    cbnz    %w1, 1b         \n"
                           "2:                          \n"
                           : "=&r" (prev), "=&r" (tmp)
@@ -258,7 +258,7 @@ static inline bool pmix_atomic_compare_exchange_strong_rel_64 (pmix_atomic_int64
     int tmp;
     bool ret;
 
-    __asm__ __volatile__ ("1:  ldxr    %0, [%2]        \n"
+    __asm__ __volatile__ ("1:  ldaxr    %0, [%2]        \n"
                           "    cmp     %0, %3          \n"
                           "    bne     2f              \n"
                           "    stlxr   %w1, %4, [%2]   \n"
@@ -305,9 +305,9 @@ static inline bool pmix_atomic_compare_exchange_strong_rel_64 (pmix_atomic_int64
         type newval, old;                                               \
         int32_t tmp;                                                    \
                                                                         \
-        __asm__ __volatile__("1:  ldxr   %" reg "1, [%3]        \n"     \
+        __asm__ __volatile__("1:  ldaxr   %" reg "1, [%3]        \n"     \
                              "    " inst "   %" reg "0, %" reg "1, %" reg "4 \n" \
-                             "    stxr   %w2, %" reg "0, [%3]   \n"     \
+                             "    stlxr   %w2, %" reg "0, [%3]   \n"     \
                              "    cbnz   %w2, 1b         \n"            \
                              : "=&r" (newval), "=&r" (old), "=&r" (tmp) \
                              : "r" (addr), "r" (value)                  \
